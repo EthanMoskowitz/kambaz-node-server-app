@@ -32,6 +32,7 @@ export default function QuizzesDao() {
   }
 
   async function deleteQuiz(quizId) {
+    await attemptModel.deleteMany({ quizId });
     return await model.deleteOne({ _id: quizId });
   }
 
