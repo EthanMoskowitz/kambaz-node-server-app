@@ -72,13 +72,8 @@ export default function QuizzesRoutes(app) {
 
   // Attempts
   const getMyAttempts = async (req, res) => {
-    const { quizId } = req.params;
-    const currentUser = req.session?.currentUser;
-    if (!currentUser) return res.status(401).json({ message: "Not signed in" });
-    const attempts = await dao.findAttemptsForUserAndQuiz(
-      currentUser._id,
-      quizId,
-    );
+    const { quizId, userId } = req.params;
+    const attempts = await dao.findAttemptsForUserAndQuiz(quizId, userId);
     res.json(attempts);
   };
 
@@ -90,8 +85,8 @@ export default function QuizzesRoutes(app) {
     if (!quiz) return res.status(404).json({ message: "Quiz not found" });
 
     const attemptCount = await dao.countAttemptsForUserAndQuiz(
-      currentUser._id,
       quizId,
+      currentUser._id,
     );
     if (quiz.multipleAttempts && attemptCount >= quiz.howManyAttempts) {
       return res.status(403).json({ message: "No attempts remaining" });
@@ -144,6 +139,6 @@ export default function QuizzesRoutes(app) {
   app.post("/api/quizzes/:quizId/questions", addQuestion);
   app.put("/api/quizzes/:quizId/questions/:questionId", updateQuestion);
   app.delete("/api/quizzes/:quizId/questions/:questionId", deleteQuestion);
-  app.get("/api/quizzes/:quizId/attempts/me", getMyAttempts);
+  app.get("/api/quizzes/:quizId/attempts/:userId", getMyAttempts);
   app.post("/api/quizzes/:quizId/attempts", submitAttempt);
 }

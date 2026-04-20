@@ -69,18 +69,18 @@ export default function QuizzesDao() {
   }
 
   // Quiz Attempts
-  async function findAttemptsForUserandQuiz(quizId, userId) {
+  async function findAttemptsForUserAndQuiz(quizId, userId) {
     return await attemptModel.find({ quizId, userId });
   }
 
-  async function countAttemptsForUserandQuiz(quizId, userId) {
+  async function countAttemptsForUserAndQuiz(quizId, userId) {
     return await attemptModel.countDocuments({ quizId, userId });
   }
 
   async function createAttempt(attempt) {
     const count = await countAttemptsForUserAndQuiz(
-      attempt.userId,
       attempt.quizId,
+      attempt.userId,
     );
     const newAttempt = { ...attempt, _id: uuidv4(), attemptNumber: count + 1 };
     return attemptModel.create(newAttempt);
@@ -98,8 +98,8 @@ export default function QuizzesDao() {
     addQuestion,
     updateQuestion,
     deleteQuestion,
-    findAttemptsForUserandQuiz,
-    countAttemptsForUserandQuiz,
+    findAttemptsForUserAndQuiz,
+    countAttemptsForUserAndQuiz,
     createAttempt,
   };
 }
