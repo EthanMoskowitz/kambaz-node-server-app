@@ -17,6 +17,12 @@ const schema = new mongoose.Schema(
       ],
       default: "GRADED_QUIZ",
     },
+    assignmentGroup: {
+      type: String,
+      enum: ["Quizzes", "Exams", "Assignments", "Projects"],
+      default: "Quizzes",
+    },
+    points: { type: Number, default: 0 },
     shuffleAnswers: { type: Boolean, default: true },
     timeLimit: { type: Number, default: 20 },
     multipleAttempts: { type: Boolean, default: false },

@@ -51,22 +51,42 @@ export default function QuizzesDao() {
       { _id: quizId },
       { $push: { questions: newQuestion } },
     );
+    await model.updateOne(
+      { _id: quizId },
+      { $inc: { points: newQuestion.points || 0 } },
+    );
     return newQuestion;
   }
 
   async function updateQuestion(quizId, questionId, questionUpdates) {
     const quiz = await model.findById(quizId);
     const question = quiz.questions.id(questionId);
+    const oldPoints = question.points || 0;
     Object.assign(question, questionUpdates);
+    await model.updateOne(
+      { _id: quizId },
+      {
+        $inc: {
+          points: (questionUpdates.points || 0) - oldPoints,
+        },
+      },
+    );
     await quiz.save();
     return question;
   }
 
   async function deleteQuestion(quizId, questionId) {
-    return model.updateOne(
+    const quiz = await model.findById(quizId);
+    const question = quiz?.questions.id(questionId);
+    await model.updateOne(
       { _id: quizId },
       { $pull: { questions: { _id: questionId } } },
     );
+    await model.updateOne(
+      { _id: quizId },
+      { $inc: { points: -(question.points || 0) } },
+    );
+    return { deleted: true };
   }
 
   // Quiz Attempts
